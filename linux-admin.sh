@@ -30,9 +30,7 @@ main() {
         read -p "Enter your choice: " choice
 
         case "$choice" in
-            1)
-                run_health_check
-                ;;
+            1) run_health_check ;;
 
             2)
                 echo "[File Manager] Not implemented yet"
