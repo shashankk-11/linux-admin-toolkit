@@ -2,6 +2,7 @@
 
 source modules/health.sh
 source modules/file_manager.sh
+source modules/log_analyzer.sh
 
 show_menu() {
     echo "========================================"
@@ -35,9 +36,7 @@ main() {
 
             2) file_manager_menu ;;
 
-            3)
-                echo "[Log Analyzer] Not implemented yet"
-                ;;
+            3) log_analyzer_menu ;;
 
             4)
                 echo "[Backup Manager] Not implemented yet"
