@@ -140,9 +140,7 @@ fm_create_file() {
 # ------------------------------------------------------------
 
 fm_copy_file() {
-    local source
-    local destination
-    local destination_dir
+    local source destination destination_dir target_path
 
     read -p "Enter source file: " source
     read -p "Enter destination path: " destination
@@ -162,37 +160,29 @@ fm_copy_file() {
         return 1
     fi
 
-    # If destination is an existing directory,
-    # cp will place the file inside it.
+    # Resolve what the final path will actually be, whether the
+    # destination is a directory (file goes inside it) or a new filename.
     if [ -d "$destination" ]; then
-
-        if cp "$source" "$destination"; then
-            fm_success "File copied to directory: $destination"
-            return 0
-        else
-            fm_failed "Unable to copy '$source'."
+        target_path="$destination/$(basename "$source")"
+    else
+        target_path="$destination"
+        destination_dir=$(dirname "$destination")
+        if [ ! -d "$destination_dir" ]; then
+            fm_failed "Destination directory '$destination_dir' does not exist."
             return 1
         fi
     fi
 
-    # Destination is a new file path.
-    destination_dir=$(dirname "$destination")
-
-    if [ ! -d "$destination_dir" ]; then
-        fm_failed "Destination directory '$destination_dir' does not exist."
-        return 1
-    fi
-
-    if [ -e "$destination" ]; then
-        fm_failed "Destination '$destination' already exists."
+    if [ -e "$target_path" ]; then
+        fm_failed "'$target_path' already exists. Copy cancelled to avoid overwriting."
         return 1
     fi
 
     if cp "$source" "$destination"; then
-        fm_success "File copied: $source -> $destination"
+        fm_success "File copied: $source -> $target_path"
         return 0
     else
-        fm_failed "Unable to copy '$source' to '$destination'."
+        fm_failed "Unable to copy '$source' to '$target_path'."
         return 1
     fi
 }
@@ -203,9 +193,7 @@ fm_copy_file() {
 # ------------------------------------------------------------
 
 fm_move_file() {
-    local source
-    local destination
-    local destination_dir
+    local source destination destination_dir target_path
 
     read -p "Enter source file: " source
     read -p "Enter destination path: " destination
@@ -225,40 +213,32 @@ fm_move_file() {
         return 1
     fi
 
-    # If destination is an existing directory,
-    # move the file inside that directory.
+    # Resolve what the final path will actually be, whether the
+    # destination is a directory (file goes inside it) or a new filename.
     if [ -d "$destination" ]; then
-
-        if mv "$source" "$destination"; then
-            fm_success "File moved to directory: $destination"
-            return 0
-        else
-            fm_failed "Unable to move '$source'."
+        target_path="$destination/$(basename "$source")"
+    else
+        target_path="$destination"
+        destination_dir=$(dirname "$destination")
+        if [ ! -d "$destination_dir" ]; then
+            fm_failed "Destination directory '$destination_dir' does not exist."
             return 1
         fi
     fi
 
-    destination_dir=$(dirname "$destination")
-
-    if [ ! -d "$destination_dir" ]; then
-        fm_failed "Destination directory '$destination_dir' does not exist."
-        return 1
-    fi
-
-    if [ -e "$destination" ]; then
-        fm_failed "Destination '$destination' already exists."
+    if [ -e "$target_path" ]; then
+        fm_failed "'$target_path' already exists. Move cancelled to avoid overwriting."
         return 1
     fi
 
     if mv "$source" "$destination"; then
-        fm_success "File moved: $source -> $destination"
+        fm_success "File moved: $source -> $target_path"
         return 0
     else
-        fm_failed "Unable to move '$source' to '$destination'."
+        fm_failed "Unable to move '$source' to '$target_path'."
         return 1
     fi
 }
-
 
 # ------------------------------------------------------------
 # 6. Delete file
