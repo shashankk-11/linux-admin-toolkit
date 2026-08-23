@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 source modules/health.sh
+source modules/file_manager.sh
 
 show_menu() {
     echo "========================================"
@@ -32,9 +33,7 @@ main() {
         case "$choice" in
             1) run_health_check ;;
 
-            2)
-                echo "[File Manager] Not implemented yet"
-                ;;
+            2) file_manager_menu ;;
 
             3)
                 echo "[Log Analyzer] Not implemented yet"
