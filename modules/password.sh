@@ -1,0 +1,1 @@
+# writing my first bash script to automate some linux admin tasks.
